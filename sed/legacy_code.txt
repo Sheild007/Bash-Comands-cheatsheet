@@ -1,0 +1,18 @@
+function setup_foo() {
+    var my_foo = "This is a foo string";
+    var another_foo = "Foo is foo, right?"; // foo foo foo
+}
+
+// DEPRECATED: Do not use this function anymore.
+function old_calc() {
+    return 1 + 1;
+}
+
+    // This line is heavily indented.
+        // And this one too.
+
+Date created: 2023-10-25
+Date modified: 2023-12-01
+
+var color = "red";
+var SIZE = "LARGE";
