@@ -7,6 +7,7 @@ Topics included:
 - bash_scripting
 - curl
 - data_wrangling
+- debugging
 - env
 - fd
 - find
