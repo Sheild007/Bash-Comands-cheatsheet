@@ -15,6 +15,7 @@ Topics included:
 - glob
 - grep
 - jq
+- profiling
 - regex
 - ripgrep
 - sed
