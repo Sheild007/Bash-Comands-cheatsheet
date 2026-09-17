@@ -1,0 +1,13 @@
+[2023-10-25 10:00:01] INFO: Server started successfully.
+[2023-10-25 10:00:15] DEBUG: Loading configuration files.
+[2023-10-25 10:05:22] INFO: User 'admin' logged in from 192.168.1.50.
+[2023-10-25 10:15:00] WARNING: High memory usage detected.
+[2023-10-25 10:15:05] DEBUG: Memory usage at 85%.
+[2023-10-25 10:20:12] ERROR: Failed to connect to database at 10.0.0.5.
+[2023-10-25 10:21:00] INFO: Retrying database connection.
+[2023-10-25 10:21:05] CRITICAL: Database connection permanently failed.
+[2023-10-25 10:25:30] error: unhandled exception in module 'auth'.
+[2023-10-25 10:30:00] INFO: User 'guest' logged in from 172.16.0.100.
+[2023-10-25 10:45:00] DEBUG: Running background maintenance task.
+[2023-10-25 11:00:00] WARNING: Disk space on /var/log is at 90%.
+[2023-10-25 11:05:00] INFO: Log rotation completed.
