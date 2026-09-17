@@ -9,6 +9,7 @@ Topics included:
 - data_wrangling
 - env
 - find
+- fzf
 - glob
 - grep
 - jq
