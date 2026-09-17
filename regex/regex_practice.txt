@@ -1,0 +1,14 @@
+John Doe - 555-123-4567 - john.doe@example.com
+Jane Smith - jane.smith@work.net
+Error: Invalid input detected at line 42.
+The server IP is 192.168.1.105 and the backup is 10.0.0.5.
+Today's date is 2023-10-25. Tomorrow is 2023-10-26.
+Warning: Disk space running low.
+Call me at 555-987-6543 or email fake@email.co.uk.
+IP address: 256.300.1.1 (Invalid IP, but matches basic pattern)
+Valid date: 1999-01-01
+Invalid date: 23-10-2023
+Some random text with a price of $45.99.
+Error: Connection timed out.
+Not an email: user@domain
+Phone: 1234567890 (no hyphens)
