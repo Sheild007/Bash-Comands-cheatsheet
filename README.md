@@ -20,5 +20,6 @@ Topics included:
 - signals
 - ssh
 - tmux
+- vim
 
 Everything here is meant for quick lookup and practical exercises.
