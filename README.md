@@ -8,6 +8,7 @@ Topics included:
 - curl
 - data_wrangling
 - env
+- fd
 - find
 - fzf
 - glob
