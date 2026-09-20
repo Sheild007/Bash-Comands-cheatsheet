@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # ----------------------------------------
+  # Web Application Service
+  # ----------------------------------------
+  web:
+    # Build from the Dockerfile in this directory
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    
+    # Map port 8080 on the host machine to port 3000 inside the container
+    ports:
+      - "8080:3000"
+    
+    # Pass environment variables (read securely from a .env file on the host)
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=postgres_db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    
+    # Restart the container if it crashes, unless we explicitly stopped it
+    restart: unless-stopped
+    
+    # Do NOT start the web app until the database is fully ready to accept connections
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+
+  # ----------------------------------------
+  # Database Service
+  # ----------------------------------------
+  postgres_db:
+    # Use a specific, slim version of PostgreSQL
+    image: postgres:15-alpine
+    
+    # Ensure the database restarts on crash or host reboot
+    restart: unless-stopped
+    
+    # Database credentials (again, read from a secure .env file)
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    
+    # Map the container's data directory to a Docker Named Volume.
+    # If the container is destroyed, the data safely persists in the volume!
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    
+    # Healthcheck: This repeatedly runs a command to check if PostgreSQL is ready.
+    # The 'web' service waits for this to pass before it starts.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# Define the named volumes used by our services
+volumes:
+  pgdata:
