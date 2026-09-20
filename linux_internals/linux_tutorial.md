@@ -1,0 +1,110 @@
+# Linux Internals & File System Architecture
+
+To truly master Linux, you need to understand how it organizes itself and how it manages running programs. Two of the most important concepts are the **File System Hierarchy** and **systemd** (the init system).
+
+---
+
+## 1. The Linux File System Hierarchy
+
+Unlike Windows which uses drive letters (`C:\`, `D:\`), Linux uses a single, unified directory tree starting at the root (`/`). This structure is standardized by the **FHS** (Filesystem Hierarchy Standard).
+
+### Key Directories You Must Know:
+- **`/` (Root)**: The very top of the file system. Everything lives under here.
+- **`/bin` & `/usr/bin`**: Essential command binaries (like `ls`, `grep`, `cat`). This is where your commands actually live!
+- **`/sbin` & `/usr/sbin`**: System binaries, mostly intended for the root user (e.g., `fdisk`, `reboot`).
+- **`/etc`**: Configuration files. If you want to change how SSH or Docker behaves globally, the config file is here (e.g., `/etc/ssh/sshd_config`).
+- **`/var`**: Variable data. This is where files that constantly change are kept. The most important sub-directory here is `/var/log` (where system logs live). Databases also often store data in `/var/lib/`.
+- **`/home`**: Personal user directories (e.g., `/home/usmandauna`). Your personal configs (`.bashrc`, `.ssh`) live here.
+- **`/tmp`**: Temporary files. Anyone can write here. The OS often clears this out on reboot.
+- **`/dev`**: Device files. In Linux, "everything is a file"—even hardware! Your hard drive might be `/dev/sda`, and your webcam might be `/dev/video0`.
+- **`/proc` & `/sys`**: **Virtual** file systems. These don't exist on your hard drive! They are generated in memory by the Linux kernel. They expose real-time information about running processes and hardware.
+
+---
+
+## 2. Process Management & Systemd
+
+When Linux boots up, the kernel is loaded, and it starts exactly *one* program: **The Init System (PID 1)**. On almost all modern Linux distributions, this program is called `systemd`.
+
+`systemd` is responsible for starting everything else: network managers, SSH servers, databases, and graphical interfaces.
+
+### A. Managing Services with `systemctl`
+
+`systemctl` is the command used to control `systemd`. 
+
+- **Check status of a service:**
+  `systemctl status sshd`
+- **Start or Stop a service:**
+  `sudo systemctl start sshd`
+  `sudo systemctl stop sshd`
+- **Restart a service (useful after changing configs in `/etc/`):**
+  `sudo systemctl restart sshd`
+- **Enable a service (so it starts automatically on boot):**
+  `sudo systemctl enable sshd`
+- **Disable a service (stops it from starting on boot):**
+  `sudo systemctl disable sshd`
+
+### B. Reading Logs with `journalctl`
+
+`systemd` collects logs from the kernel and all the services it manages into a central journal. You read this journal using `journalctl`.
+
+- **View all logs (usually massive):**
+  `journalctl`
+- **View logs for a specific service (Very useful!):**
+  `journalctl -u sshd`
+- **Follow logs in real-time (like `tail -f`):**
+  `journalctl -f`
+- **View logs since the system booted up:**
+  `journalctl -b`
+- **View logs for the last hour:**
+  `journalctl --since "1 hour ago"`
+
+---
+
+## 3. Creating Your Own Systemd Service
+
+You can write scripts and tell `systemd` to manage them. This is how you deploy backend apps!
+
+Systemd services are just text files ending in `.service`, usually placed in `/etc/systemd/system/`.
+
+Here is an example of what a simple service file looks like (`my_app.service`):
+
+```ini
+[Unit]
+Description=My Awesome Python Web App
+After=network.target
+
+[Service]
+# Run it as a normal user, not root!
+User=usmandauna
+WorkingDirectory=/home/usmandauna/my_project/
+# The command to start the app
+ExecStart=/usr/bin/python3 app.py
+# If it crashes, automatically restart it
+Restart=always
+
+[Install]
+# This tells systemd to start the app when the system enters standard multi-user mode
+WantedBy=multi-user.target
+```
+
+To run this, you would:
+1. Save it to `/etc/systemd/system/my_app.service`.
+2. Tell systemd to look for new files: `sudo systemctl daemon-reload`.
+3. Start it: `sudo systemctl start my_app`.
+
+---
+
+## Exercises
+
+**Exercise 1: Exploring Virtual Filesystems**
+1. Run `cat /proc/cpuinfo`. This prints hardware information about your CPU straight from the kernel!
+2. Run `cat /proc/meminfo` to see real-time RAM usage.
+3. Every running program has a folder in `/proc` named after its Process ID (PID). Run `echo $$` to get the PID of your current bash shell. Then run `ls /proc/<your_pid>` to see all the kernel data about your shell!
+
+**Exercise 2: Systemctl Practice**
+1. Run `systemctl list-units --type=service`. This will show you every single service running on your machine.
+2. Find one (e.g., `cron`, `NetworkManager`, or `sshd`) and run `systemctl status <name>` to see if it is currently running and whether it is enabled on boot.
+
+**Exercise 3: Journalctl Hunting**
+1. Run `journalctl -k` to see only the messages generated by the Linux Kernel itself.
+2. Run `journalctl -u ssh` (or `sshd`) to see the history of SSH connections to your machine. Can you find a log line from when you successfully logged in?

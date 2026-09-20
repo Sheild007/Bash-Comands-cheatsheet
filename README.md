@@ -16,6 +16,7 @@ Topics included:
 - glob
 - grep
 - jq
+- linux_internals
 - profiling
 - regex
 - ripgrep
