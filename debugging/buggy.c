@@ -15,8 +15,8 @@ int main() {
     
     // BUG 2: Null pointer dereference (Causes Segmentation Fault)
     printf("Attempting to write to pointer...\n");
-    int *ptr = NULL;
-    *ptr = 100;
+    // int *ptr = NULL;
+    // *ptr = 100;
     
     printf("Program finished successfully!\n");
     return 0;

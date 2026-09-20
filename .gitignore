@@ -1,0 +1,18 @@
+# Ignore profiling data and flamegraph outputs
+perf.data*
+callgrind.out.*
+*.folded
+*.perf
+*.svg
+
+# Ignore specific compiled executables
+debugging/buggy
+profiling/coruption
+profiling/leaky
+profiling/merge_sort
+profiling/slow
+profiling/uaf
+
+# Ignore FlameGraph
+profiling/FlameGraph/
+FlameGraph/
