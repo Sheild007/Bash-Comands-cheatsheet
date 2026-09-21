@@ -226,3 +226,76 @@ ss -tlnp | grep 4444
 # Terminate it
 kill 12345
 ```
+
+## Part 4: Environments, Packages, and Docker
+
+### 1. Virtual Environments and `$PATH`
+**What changed in the environment?** 
+When you activate a virtual environment, the shell prepends the venv's `bin` directory to your `$PATH` environment variable. It also sets variables like `$VIRTUAL_ENV`.
+**Why does the shell prefer the venv?** 
+Because the venv's `bin` directory is added to the *beginning* of `$PATH`. When you type `python`, the shell searches directories in `$PATH` from left to right. It finds the Python binary in the venv first, so it uses that one instead of the system Python.
+**What does `deactivate` do?** 
+If you run `type deactivate`, you'll see it's a shell function (not a script). It undoes the changes made during activation: it removes the venv's `bin` directory from `$PATH`, unsets `$VIRTUAL_ENV`, and restores your original command prompt.
+
+### 2. Python Package and Lockfile
+I have created a sample package skeleton in the `python_package/` directory with a `pyproject.toml`.
+To install it in a venv and generate a lockfile (using `pip-tools`):
+```bash
+cd python_package
+python -m venv venv
+source venv/bin/activate
+pip install pip-tools
+# Compile a lockfile from pyproject.toml
+pip-compile pyproject.toml
+# Inspect the lockfile
+cat requirements.txt
+# Install from lockfile
+pip-sync
+```
+
+### 3. Build Missing Semester Website with Docker
+```bash
+git clone https://github.com/missing-semester/missing-semester.git
+cd missing-semester
+# Build and run the docker container in the background
+docker compose up -d
+# View the website at http://localhost:4000
+```
+
+### 4. Dockerfile & Docker Compose (Python + Redis)
+I have created a complete working example in the `python_docker_app/` directory!
+It contains:
+- `app.py`: A simple python web server that increments a counter in Redis.
+- `Dockerfile`: Instructions to build the Python app.
+- `docker-compose.yml`: Wires the Python app container and a Redis container together.
+To run it:
+```bash
+cd python_docker_app
+docker compose up
+# Then visit http://localhost:8000
+```
+
+### 5. Publishing to TestPyPI & ghcr.io
+**Publishing to TestPyPI:**
+```bash
+cd python_package
+pip install build twine
+python -m build
+# Upload to TestPyPI (requires an account and API token)
+python -m twine upload --repository testpypi dist/*
+```
+**Pushing a Docker image to GitHub Container Registry (ghcr.io):**
+```bash
+# Login using a GitHub Personal Access Token (PAT)
+echo $CR_PAT | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
+# Tag the image
+docker tag my-python-app ghcr.io/your_github_username/my-python-app:latest
+# Push the image
+docker push ghcr.io/your_github_username/my-python-app:latest
+```
+
+### 6. GitHub Pages
+1. Go to your GitHub repository settings.
+2. Under the "Pages" tab, select the "main" branch and save.
+3. GitHub will automatically host your `README.md` (or any `index.html`) at `https://yourusername.github.io/Bash-Comands-cheatsheet/`.
+*(To configure a custom domain, you would add a `CNAME` file to the root of the repo with your domain name, and configure your DNS provider with a CNAME record pointing to `yourusername.github.io`)*.
